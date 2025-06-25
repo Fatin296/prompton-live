@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMPTON - AI Toolkit</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Exo 2', sans-serif;
+            color: #e5e7eb;
+            overflow-x: hidden;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnBtZXRzdjhpZDVsYmdqNGtycG04M2dkbnhsdWU5cnVhbTR6OXYwMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohzdZpnnsP7Y3fWne/giphy.gif');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Typography */
+        .prompton-brand {
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2, h3 { font-weight: 600; }
+
+        /* Custom scrollbar */
+        textarea::-webkit-scrollbar, .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        textarea::-webkit-scrollbar-track, .custom-scrollbar::-webkit-scrollbar-track { background: #0d1117; }
+        textarea::-webkit-scrollbar-thumb, .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #2c5282;
+            border-radius: 20px;
+            border: 3px solid #0d1117;
+        }
+
+        /* Output box styling */
+        .output-content ul { list-style-type: disc; padding-left: 20px; }
+        .output-content ol { list-style-type: decimal; padding-left: 20px; }
+        .output-content li { margin-bottom: 0.5rem; }
+        .output-content:empty::before {
+            content: attr(data-placeholder);
+            color: #6b7280;
+            cursor: default;
+        }
+        .output-content pre {
+            background-color: #111827;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 1s ease-in-out forwards; }
+        .fade-in-up { animation: fadeInUp 0.8s ease-in-out forwards; }
+
+        /* Spinner */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Glow effect */
+        .glow-button {
+            box-shadow: 0 0 5px #2563eb, 0 0 10px #2563eb;
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .glow-button:hover:not(:disabled) {
+            box-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+            transform: scale(1.05);
+        }
+
+        /* Footer Styling */
+        .footer-heading-gradient {
+            background: linear-gradient(90deg, #14b636, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .footer-icon-group { position: relative; }
+        .footer-icon-group .tooltip {
+            position: absolute;
+            bottom: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1f2937;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+        .footer-icon-group:hover .tooltip { opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <div id="root-container" class="relative z-10 min-h-screen flex flex-col p-4 sm:p-6 lg:p-8 fade-in">
+        <header class="w-full max-w-7xl mx-auto mb-8 fade-in-up">
+            <nav class="flex justify-between items-center py-4">
+                <div class="flex items-center gap-3 cursor-pointer" data-page="home">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 21H8.5C7.11929 21 6 19.8807 6 18.5V5.5C6 4.11929 7.11929 3 8.5 3H13.5L18 7.5V11.5" /><path d="M9 8H12" /><path d="M9 11H15" /><path d="M12.0001 21.0001L14.0001 16.5001L18.5001 14.5001L16.5001 19.0001L12.0001 21.0001Z" /><path d="M16.5 14.5L9.5 17.5" /><path d="M17.5 5.5L18 4L18.5 5.5L20 6L18.5 6.5L18 8L17.5 6.5L16 6L17.5 5.5Z" /></g></svg>
+                    
+                    <div class="flex items-baseline gap-2">
+                      <h1 class="text-4xl prompton-brand">PROMPTON</h1>
+                      <span class="text-xs font-semibold text-amber-400 bg-amber-400/20 px-1.5 py-0.5 rounded-md tracking-wider">BETA</span>
+                    </div>
+                </div> 
+                <div class="hidden md:flex items-center space-x-6">
+                    <button class="nav-link text-gray-300 hover:text-blue-400 transition-colors" data-page="home">Home</button>
+                    <button class="nav-link text-gray-300 hover:text-blue-400 transition-colors" data-page="toolkit">Toolkit</button>
+                    <button class="nav-link text-gray-300 hover:text-blue-400 transition-colors" data-page="blog">Blog</button>
+                    <button class="nav-link text-gray-300 hover:text-blue-400 transition-colors" data-page="changelog">Changelog</button>
+                    <button class="nav-link text-gray-300 hover:text-blue-400 transition-colors" data-page="about">About</button>
+                    <button class="nav-link text-gray-300 hover:text-blue-400 transition-colors" data-page="more">More</button>
+                </div>
+            </nav>
+        </header>
+
+        <main id="page-content" class="w-full max-w-6xl mx-auto flex flex-col items-center flex-grow"></main>
+
+        <footer class="w-full bg-gray-900 bg-opacity-30 mt-16 border-t border-gray-800">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                    <div class="col-span-2 lg:col-span-2">
+                        <div class="flex items-center gap-3 cursor-pointer" data-page="home">
+                           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 21H8.5C7.11929 21 6 19.8807 6 18.5V5.5C6 4.11929 7.11929 3 8.5 3H13.5L18 7.5V11.5" /><path d="M9 8H12" /><path d="M9 11H15" /><path d="M12.0001 21.0001L14.0001 16.5001L18.5001 14.5001L16.5001 19.0001L12.0001 21.0001Z" /><path d="M16.5 14.5L9.5 17.5" /><path d="M17.5 5.5L18 4L18.5 5.5L20 6L18.5 6.5L18 8L17.5 6.5L16 6L17.5 5.5Z" /></g></svg>
+                            <h1 class="text-2xl prompton-brand">PROMPTON</h1>
+                        </div>
+                        <p class="mt-4 text-gray-400 text-sm">Smarter Prompts. Sharper Results.</p>
+                         <div class="mt-4 flex items-center gap-3 text-gray-400 text-sm">Powered by<img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="h-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"><path d="M12 2.75L14.75 5.5L12 8.25L9.25 5.5L12 2.75ZM5.5 9.25L8.25 12L5.5 14.75L2.75 12L5.5 9.25ZM18.5 9.25L21.25 12L18.5 14.75L15.75 12L18.5 9.25ZM12 15.75L14.75 18.5L12 21.25L9.25 18.5L12 15.75Z" fill="url(#gemini-gradient)"/><defs><linearGradient id="gemini-gradient" x1="2.75" y1="2.75" x2="21.25" y2="21.25" gradientUnits="userSpaceOnUse"><stop stop-color="#89F1FF"/><stop offset="1" stop-color="#5E62FF"/></linearGradient></defs></svg><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M10.8824 2.82361L3 13.7059H12.0118L13.1176 21.1765L21 10.2942H11.9882L10.8824 2.82361Z" fill="#F4B400"/></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase footer-heading-gradient">Product</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li><a href="#" data-page="home" class="text-base text-gray-300 hover:text-white nav-link">Home</a></li>
+                            <li><a href="#" data-page="toolkit" class="text-base text-gray-300 hover:text-white nav-link">Toolkit</a></li>
+                            <li><a href="#" data-page="more" class="text-base text-gray-300 hover:text-white nav-link">More Tools</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                         <h3 class="text-sm font-semibold tracking-wider uppercase footer-heading-gradient">Company</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li><a href="#" data-page="about" class="text-base text-gray-300 hover:text-white nav-link">About</a></li>
+                            <li><a href="#" data-page="blog" class="text-base text-gray-300 hover:text-white nav-link">Blog</a></li>
+                            <li><a href="#" data-page="changelog" class="text-base text-gray-300 hover:text-white nav-link">Changelog</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold tracking-wider uppercase footer-heading-gradient">Support</h3>
+                        <ul class="mt-4 space-y-4">
+                            <li><a href="#" data-page="contact" class="text-base text-gray-300 hover:text-white nav-link">Contact</a></li>
+                            <li><a href="#" data-page="faq" class="text-base text-gray-300 hover:text-white nav-link">FAQ</a></li>
+                            <li><a href="#" data-page="updates" class="text-base text-gray-300 hover:text-white nav-link">Next Release</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-12 border-t border-gray-800 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p class="text-sm text-gray-500">Prompton © 2025 | All rights reserved Ⓡ Fatin Ehsan.</p>
+                    <div id="social-icons" class="flex items-center space-x-6"></div>
+                </div>
+            </div>
+        </footer>
+        <div id="templates-container" style="display: none;">
+            <div id="home-template-container">
+                <div class="text-center fade-in-up" style="animation-delay: 100ms;">
+                    <h2 class="text-4xl md:text-5xl font-bold text-white">Your Complete AI Prompt Toolkit</h2>
+                    <p class="mt-2 text-lg text-gray-400">Refine, diversify and generate prompts to unlock AI's full potential.</p>
+                </div>
+                <div class="mt-8 mb-6 flex justify-center flex-wrap gap-2 p-1 bg-gray-900 border border-gray-800 rounded-lg fade-in-up" style="animation-delay: 200ms;">
+                    <button data-tool="refine" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2">✨ Enhance</button>
+                    <button data-tool="variations" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Variations</button>
+                    <button data-tool="ideas" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg> Ideas</button>
+                    <button data-tool="persona" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Add Persona</button>
+                    <button data-tool="format" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg> Specify Format</button>
+                    <button data-tool="constraints" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg> Add Constraints</button>
+                </div>
+                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
+                    <div class="flex flex-col"><div class="h-8 flex items-center mb-2"><label id="home-inputLabel" for="home-userInput" class="text-sm font-medium text-gray-300">Enter your prompt to Enhance</label></div><textarea id="home-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="e.g., write a story about a robot"></textarea></div>
+                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="home-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="home-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="home-outputContent" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
+                </div>
+                <div class="w-full flex justify-center mt-8 fade-in-up" style="animation-delay: 400ms;"><button id="home-executeButton" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg glow-button flex items-center justify-center gap-2"><span id="home-executeButtonIcon">✨</span><span id="home-executeButtonText">Enhance</span></button></div>
+            </div>
+        
+            <div id="toolkit-template-container">
+                <div class="text-center fade-in-up" style="animation-delay: 100ms;"><h2 class="text-4xl md:text-5xl font-bold text-white">Content & SEO Toolkit</h2><p class="mt-2 text-lg text-gray-400">Analyze, optimize, and perfect your marketing content.</p></div>
+                <div class="mt-8 mb-6 flex justify-center flex-wrap gap-2 p-1 bg-gray-900 border border-gray-800 rounded-lg fade-in-up" style="animation-delay: 200ms;">
+                    <button data-tool="summarize" class="tool-tab-toolkit px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg> Summarize</button>
+                    <button data-tool="grammar" class="tool-tab-toolkit px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Grammar</button>
+                    <button data-tool="keywords" class="tool-tab-toolkit px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg> Keywords</button>
+                    <button data-tool="tone" class="tool-tab-toolkit px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Tone Adjust</button>
+                    <button data-tool="plagiarism" class="tool-tab-toolkit px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Plagiarism</button>
+                </div>
+                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
+                    <div class="flex flex-col"><div class="h-8 flex items-center mb-2"><label id="toolkit-inputLabel" for="toolkit-userInput" class="text-sm font-medium text-gray-300">Enter text to Summarize</label></div><textarea id="toolkit-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="Paste your article, notes, or any text here..."></textarea></div>
+                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="toolkit-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="toolkit-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="toolkit-outputContent" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
+                </div>
+                <div class="w-full flex justify-center mt-8 fade-in-up" style="animation-delay: 400ms;"><button id="toolkit-executeButton" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg glow-button flex items-center justify-center gap-2"><span id="toolkit-executeButtonIcon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></span><span id="toolkit-executeButtonText">Summarize</span></button></div>
+            </div>
+        
+            <div id="about-template-container"><div class="max-w-4xl mx-auto py-12 text-center fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4">About Prompton</h2><p class="text-lg text-gray-400 mb-8">Prompton was born from a simple idea: the quality of an AI's output is directly proportional to the quality of its input. In a world powered by large language models, the ability to craft clear, precise, and effective prompts is the key to unlocking true potential. Our mission is to provide creators, developers, and innovators with the tools to master the art of prompt engineering effortlessly.</p><div class="grid md:grid-cols-2 gap-8 text-left"><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-colors duration-300"><h3 class="text-xl font-semibold text-blue-400 mb-2">Our Vision</h3><p class="text-gray-400">To be the essential co-pilot in human-AI collaboration, making advanced AI accessible and effective for everyone, regardless of their technical background.</p></div><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-colors duration-300"><h3 class="text-xl font-semibold text-blue-400 mb-2">Our Technology</h3><p class="text-gray-400">We leverage the state-of-the-art Gemini API from Google, fine-tuning our meta-prompts to deliver intelligent refinements, creative variations, and insightful ideas tailored to your needs.</p></div></div></div></div>
+        
+            <div id="blog-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">The Prompton Blog</h2><div class="space-y-8"><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1"><p class="text-sm text-gray-500">June 26, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">The Art of Specificity: Why Vague Prompts Fail</h3><p class="text-gray-400 mt-2">Discover how adding context, constraints, and a persona to your prompts can dramatically increase the quality of AI-generated content...</p><a href="#" class="text-blue-400 hover:text-blue-300 mt-4 inline-block font-semibold">Read More &rarr;</a></div></div></div></div>
+        
+            <div id="changelog-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Project Changelog</h2><div class="space-y-12"><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-blue-500"><div class="absolute -left-4 top-4 h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center ring-8 ring-gray-900"><svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div><p class="text-sm text-gray-500">June 26, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.3.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Added a dedicated "Changelog" page to track project updates.</li><li><span class="font-semibold text-green-400">New Feature:</span> Expanded the Home page prompt toolkit with "Add Persona", "Specify Format", and "Add Constraints".</li><li><span class="font-semibold text-blue-400">Enhancement:</span> Restructured JavaScript to support multiple pages with unique toolsets.</li></ul></div><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-gray-700"><div class="absolute -left-3 top-4 h-6 w-6 bg-gray-700 rounded-full ring-8 ring-gray-900"></div><p class="text-sm text-gray-500">June 25, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.2.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Created the "Toolkit" page for advanced content and SEO analysis.</li><li><span class="font-semibold text-green-400">New Feature:</span> Added "Summarize Text", "Grammar Check", "Keyword Extract", "Tone Adjust", and "Plagiarism Check" tools.</li><li><span class="font-semibold text-blue-400">Enhancement:</span> Added a "Toolkit" link to the main navigation bar.</li></ul></div><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-gray-700"><div class="absolute -left-3 top-4 h-6 w-6 bg-gray-700 rounded-full ring-8 ring-gray-900"></div><p class="text-sm text-gray-500">June 24, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.0.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Initial launch of the Prompton application.</li><li><span class="font-semibold text-blue-400">Core Functionality:</span> Implemented Home, About, and Blog pages with a Single Page Application (SPA) architecture.</li><li><span class="font-semibold text-blue-400">Core Functionality:</span> Integrated Gemini API for prompt processing.</li></ul></div></div></div></div>
+        
+            <div id="more-template-container">
+                <div class="text-center fade-in-up" style="animation-delay: 100ms;"><h2 class="text-4xl md:text-5xl font-bold text-white">Advanced Tooling</h2><p class="mt-2 text-lg text-gray-400">Specialized generators for SEO, Content, Code, and Design.</p></div>
+                <div class="mt-8 mb-6 flex justify-center flex-wrap gap-2 p-1 bg-gray-900 border border-gray-800 rounded-lg fade-in-up" style="animation-delay: 200ms;">
+                    <button data-tool="seo" class="tool-tab-more px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> SEO Meta</button>
+                    <button data-tool="content" class="tool-tab-more px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Blog Outline</button>
+                    <button data-tool="code" class="tool-tab-more px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> Code Refactor</button>
+                    <button data-tool="design" class="tool-tab-more px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4-2.245 4.5 4.5 0 118.55-2.442c.32-.135.64-.293.94-.465a.75.75 0 01.95.144a2.25 2.25 0 004.283 1.099A4.491 4.491 0 0018 9.75v-.7V9A2.25 2.25 0 0015.75 6.75A2.25 2.25 0 0013.5 9v.75m-6.075 5.25a2.25 2.25 0 00-2.25 2.25c0 1.242 1.008 2.25 2.25 2.25h3.75a2.25 2.25 0 002.25-2.25V16.5c0-1.242-1.008-2.25-2.25-2.25h-3.75a2.25 2.25 0 00-2.25 2.25z" /></svg> UX Copy</button>
+                </div>
+                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
+                    <div class="flex flex-col"><div class="h-8 flex items-center mb-2"><label id="more-inputLabel" for="more-userInput" class="text-sm font-medium text-gray-300">Enter a topic or keywords</label></div><textarea id="more-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="e.g., 'AI in healthcare'"></textarea></div>
+                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="more-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="more-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="more-outputContent" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
+                </div>
+                <div class="w-full flex justify-center mt-8 fade-in-up" style="animation-delay: 400ms;"><button id="more-executeButton" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg glow-button flex items-center justify-center gap-2"><span id="more-executeButtonIcon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></span><span id="more-executeButtonText">Generate Meta</span></button></div>
+            </div>
+        
+            <div id="coming-soon-template-container"><div class="max-w-4xl mx-auto py-12 text-center fade-in-up flex flex-col items-center justify-center h-full"><svg class="h-16 w-16 text-blue-500 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Coming Soon!</h2><p class="text-lg text-gray-400 mb-8">This page is under construction. Please check back later!</p></div></div>
+        
+            <div id="faq-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Frequently Asked Questions</h2><div class="space-y-4"><div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden"><button class="faq-question w-full text-left p-4 flex justify-between items-center hover:bg-gray-800 transition-colors"><span class="text-lg font-medium text-white">What is Prompton?</span><svg class="faq-chevron w-5 h-5 text-blue-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button><div class="faq-answer hidden px-4 pb-4 pt-0 text-gray-300"><p>Prompton is an AI-powered toolkit designed to help you craft better prompts for large language models. It provides tools to refine, enhance, and generate variations of your prompts to get optimal results from AI systems.</p></div></div><div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden"><button class="faq-question w-full text-left p-4 flex justify-between items-center hover:bg-gray-800 transition-colors"><span class="text-lg font-medium text-white">Is Prompton free to use?</span><svg class="faq-chevron w-5 h-5 text-blue-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button><div class="faq-answer hidden px-4 pb-4 pt-0 text-gray-300"><p>Yes! Currently Prompton is completely free to use. We may introduce premium features in the future, but the core functionality will remain free.</p></div></div><div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden"><button class="faq-question w-full text-left p-4 flex justify-between items-center hover:bg-gray-800 transition-colors"><span class="text-lg font-medium text-white">Which AI models does Prompton use?</span><svg class="faq-chevron w-5 h-5 text-blue-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button><div class="faq-answer hidden px-4 pb-4 pt-0 text-gray-300"><p>Prompton currently uses Google's Gemini API for processing prompts. We're constantly evaluating other models and may add support for additional AI systems in future updates.</p></div></div><div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden"><button class="faq-question w-full text-left p-4 flex justify-between items-center hover:bg-gray-800 transition-colors"><span class="text-lg font-medium text-white">How do I report a bug or suggest a feature?</span><svg class="faq-chevron w-5 h-5 text-blue-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></button><div class="faq-answer hidden px-4 pb-4 pt-0 text-gray-300"><p>You can contact us through the "Contact" page in the footer. We welcome all feedback and suggestions to improve Prompton!</p></div></div></div></div></div>
+        
+            <div id="next-release-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Coming in the Next Release</h2><div class="grid md:grid-cols-2 gap-6"><div class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-xl p-6 hover:border-blue-500 transition-all hover:-translate-y-1"><div class="flex items-center mb-4"><div class="bg-blue-600 bg-opacity-20 p-3 rounded-lg mr-4"><svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><h3 class="text-xl font-semibold text-white">Prompt History</h3></div><p class="text-gray-400">Save and revisit your previous prompts with our new history feature. Never lose your best prompt formulations again.</p></div><div class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-xl p-6 hover:border-blue-500 transition-all hover:-translate-y-1"><div class="flex items-center mb-4"><div class="bg-purple-600 bg-opacity-20 p-3 rounded-lg mr-4"><svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg></div><h3 class="text-xl font-semibold text-white">Prompt Templates</h3></div><p class="text-gray-400">Access a library of pre-made templates for common use cases to jumpstart your prompt creation.</p></div><div class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-xl p-6 hover:border-blue-500 transition-all hover:-translate-y-1"><div class="flex items-center mb-4"><div class="bg-green-600 bg-opacity-20 p-3 rounded-lg mr-4"><svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3 class="text-xl font-semibold text-white">Advanced Security</h3></div><p class="text-gray-400">New encryption for your saved prompts and optional local processing mode for sensitive content.</p></div><div class="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-xl p-6 hover:border-blue-500 transition-all hover:-translate-y-1"><div class="flex items-center mb-4"><div class="bg-yellow-600 bg-opacity-20 p-3 rounded-lg mr-4"><svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg></div><h3 class="text-xl font-semibold text-white">Customization</h3></div><p class="text-gray-400">Personalize your Prompton experience with custom themes and layout preferences.</p></div></div><div class="mt-12 bg-gray-900 bg-opacity-50 border border-gray-800 rounded-xl p-6 text-center"><h3 class="text-xl font-semibold text-white mb-2">Want to suggest a feature?</h3><p class="text-gray-400 mb-4">We'd love to hear your ideas for improving Prompton!</p><button onclick="navigate('contact')" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">Contact Us</button></div></div></div>
+        </div>
+
+    <script>
+        // --- THIS IS YOUR SECURE, CLIENT-SIDE JAVASCRIPT ---
+        // --- IT DOES NOT CONTAIN ANY API KEYS ---
+
+        // --- APPLICATION STATE ---
+        let currentPage = 'home';
+        let activeHomePageTool = 'refine';
+        let activeToolkitPageTool = 'summarize';
+        let activeMorePageTool = 'seo';
+
+        // --- DOM REFERENCES ---
+        const pageContent = document.getElementById('page-content');
+
+        // --- TEMPLATE CACHE ---
+        let homePageTemplate, toolkitPageTemplate, aboutPageTemplate, blogPageTemplate,
+            changelogPageTemplate, morePageTemplate, comingSoonPageTemplate, contactPageTemplate,
+            faqTemplate, nextReleaseTemplate;
+
+        // --- CORE APPLICATION LOGIC ---
+        function navigate(page) {
+            currentPage = page;
+            pageContent.innerHTML = '';
+            pageContent.style.opacity = 0;
+
+            let newContent = '';
+            switch (page) {
+                case 'toolkit': newContent = toolkitPageTemplate; break;
+                case 'about': newContent = aboutPageTemplate; break;
+                case 'blog': newContent = blogPageTemplate; break;
+                case 'changelog': newContent = changelogPageTemplate; break;
+                case 'more': newContent = morePageTemplate; break;
+                case 'contact': newContent = contactPageTemplate; break;
+                case 'faq': newContent = faqTemplate; break;
+                case 'updates': newContent = nextReleaseTemplate; break;
+                case 'coming-soon': newContent = comingSoonPageTemplate; break;
+                case 'home': default: newContent = homePageTemplate;
+            }
+
+            pageContent.innerHTML = newContent;
+
+            switch (page) {
+                case 'home': addHomePageListeners(); setActiveHomePageTool(activeHomePageTool); break;
+                case 'toolkit': addToolkitPageListeners(); setActiveToolkitPageTool(activeToolkitPageTool); break;
+                case 'more': addMorePageListeners(); setActiveMorePageTool(activeMorePageTool); break;
+                case 'contact': document.getElementById('contact-form')?.addEventListener('submit', handleContactSubmit); break;
+                case 'faq': setupFAQPage(); break;
+            }
+
+            setTimeout(() => {
+                pageContent.style.opacity = 1;
+                pageContent.style.transition = 'opacity 0.5s';
+            }, 50);
+
+            updateNavLinks();
+        }
+
+        // --- PAGE-SPECIFIC LOGIC ---
+        function setActiveHomePageTool(tool) {
+            activeHomePageTool = tool;
+            updateTabStyles('.tool-tab', tool);
+            updateHomePageUI(tool);
+        }
+
+        function updateHomePageUI(tool) {
+            const uiConfig = {
+                refine: { label: "Enter prompt to Enhance", placeholder: "e.g., write a story about a robot", btnText: "Enhance", btnIcon: "✨" },
+                variations: { label: "Enter prompt for Variations", placeholder: "e.g., describe a futuristic city", btnText: "Variate", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>` },
+                ideas: { label: "Enter topic to Generate Ideas", placeholder: "e.g., science fiction short stories", btnText: "Brainstorm", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>` },
+                persona: { label: "Enter a Persona and a Prompt", placeholder: "e.g., Persona: a cynical detective. Prompt: describe a rainy night", btnText: "Add Persona", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>` },
+                format: { label: "Enter a Format and a Prompt", placeholder: "e.g., Format: JSON. Prompt: list the first 5 US presidents", btnText: "Apply Format", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>` },
+                constraints: { label: "Enter a Constraint and a Prompt", placeholder: "e.g., Constraint: 50 words. Prompt: explain black holes", btnText: "Apply Constraints", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>` },
+            };
+            updateUIForTool('home', tool, uiConfig);
+        }
+
+        function addHomePageListeners() {
+            document.getElementById('home-executeButton')?.addEventListener('click', handleExecute);
+            document.getElementById('home-copyButton')?.addEventListener('click', handleCopy);
+            document.querySelectorAll('.tool-tab').forEach(tab => {
+                tab.addEventListener('click', () => setActiveHomePageTool(tab.dataset.tool));
+            });
+        }
+
+        function setActiveToolkitPageTool(tool) {
+            activeToolkitPageTool = tool;
+            updateTabStyles('.tool-tab-toolkit', tool);
+            updateToolkitPageUI(tool);
+        }
+
+        function updateToolkitPageUI(tool) {
+            const uiConfig = {
+                summarize: { label: "Enter Text to Summarize", placeholder: "Paste your article, notes, or any text here...", btnText: "Summarize", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>` },
+                grammar: { label: "Enter Text to Check Grammar", placeholder: "e.g., Paste your text here for a grammar and spelling check...", btnText: "Check", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>` },
+                keywords: { label: "Enter Text to Extract Keywords", placeholder: "e.g., Paste your article here to find the main keywords...", btnText: "Extract", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>` },
+                tone: { label: "Enter Text & Desired Tone", placeholder: "e.g., Paste your email draft and specify a new tone like 'more formal' or 'more friendly'.", btnText: "Adjust Tone", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>` },
+                plagiarism: { label: "Enter Text for Plagiarism Check", placeholder: "Paste text here to check for potential plagiarism against web sources.", btnText: "Check", btnIcon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>` },
+            };
+            updateUIForTool('toolkit', tool, uiConfig);
+        }
+        
+        function addToolkitPageListeners() {
+            document.getElementById('toolkit-executeButton')?.addEventListener('click', handleExecute);
+            document.getElementById('toolkit-copyButton')?.addEventListener('click', handleCopy);
+            document.querySelectorAll('.tool-tab-toolkit').forEach(tab => {
+                tab.addEventListener('click', () => setActiveToolkitPageTool(tab.dataset.tool));
+            });
+        }
+        
+        function setActiveMorePageTool(tool) {
+            activeMorePageTool = tool;
+            updateTabStyles('.tool-tab-more', tool);
+            updateMorePageUI(tool);
+        }
+        
+        function updateMorePageUI(tool) {
+            const uiConfig = {
+                seo: { label: "Enter Topic to Generate Meta Description", placeholder: "Enter a topic or keywords for your page (e.g., 'benefits of hydration')", btnText: "Generate Meta", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>` },
+                content: { label: "Enter Topic to Create a Blog Outline", placeholder: "Enter the main topic for your blog post (e.g., 'the future of renewable energy')", btnText: "Create Outline", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>` },
+                code: { label: "Enter Code to Refactor", placeholder: "Paste the code snippet you want to refactor here...", btnText: "Refactor Code", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>` },
+                design: { label: "Describe UI Element to Generate Copy", placeholder: "Describe the UI element (e.g., 'a tooltip for a delete button', 'a cookie consent banner')", btnText: "Generate Copy", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4-2.245 4.5 4.5 0 118.55-2.442c.32-.135.64-.293.94-.465a.75.75 0 01.95.144a2.25 2.25 0 004.283 1.099A4.491 4.491 0 0018 9.75v-.7V9A2.25 2.25 0 0015.75 6.75A2.25 2.25 0 0013.5 9v.75m-6.075 5.25a2.25 2.25 0 00-2.25 2.25c0 1.242 1.008 2.25 2.25 2.25h3.75a2.25 2.25 0 002.25-2.25V16.5c0-1.242-1.008-2.25-2.25-2.25h-3.75a2.25 2.25 0 00-2.25 2.25z" /></svg>` },
+            };
+            updateUIForTool('more', tool, uiConfig);
+        }
+
+        function addMorePageListeners() {
+            document.getElementById('more-executeButton')?.addEventListener('click', handleExecute);
+            document.getElementById('more-copyButton')?.addEventListener('click', handleCopy);
+            document.querySelectorAll('.tool-tab-more').forEach(tab => {
+                tab.addEventListener('click', () => setActiveMorePageTool(tab.dataset.tool));
+            });
+        }
+        
+        function setupFAQPage() {
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const chevron = question.querySelector('.faq-chevron');
+                    const isHidden = answer.classList.contains('hidden');
+                    document.querySelectorAll('.faq-answer').forEach(ans => {
+                        if (ans !== answer) {
+                            ans.classList.add('hidden');
+                            ans.previousElementSibling.querySelector('.faq-chevron').classList.remove('rotate-180');
+                        }
+                    });
+                    answer.classList.toggle('hidden', !isHidden);
+                    chevron.classList.toggle('rotate-180', isHidden);
+                });
+            });
+        }
+
+        // --- SHARED & GENERAL-PURPOSE FUNCTIONS ---
+        function updateUIForTool(pagePrefix, tool, uiConfig) {
+            const config = uiConfig[tool];
+            if (!config) return;
+            document.getElementById(`${pagePrefix}-userInput`).placeholder = config.placeholder;
+            document.getElementById(`${pagePrefix}-inputLabel`).textContent = config.label;
+            document.getElementById(`${pagePrefix}-executeButtonText`).textContent = config.btnText;
+            document.getElementById(`${pagePrefix}-executeButtonIcon`).innerHTML = config.btnIcon;
+        }
+        
+        function updateTabStyles(selector, activeTool) {
+            document.querySelectorAll(selector).forEach(tab => {
+                const isTabActive = tab.dataset.tool === activeTool;
+                tab.classList.toggle('bg-blue-600', isTabActive);
+                tab.classList.toggle('text-white', isTabActive);
+                tab.classList.toggle('text-gray-400', !isTabActive);
+            });
+        }
+        
+        function updateNavLinks() {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const isLinkActive = link.dataset.page === currentPage;
+                link.classList.toggle('text-blue-400', isLinkActive);
+                link.classList.toggle('font-semibold', isLinkActive);
+                link.classList.toggle('text-gray-300', !isLinkActive);
+            });
+        }
+        
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            const text = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+            const whatsappURL = `https://wa.me/8801734434296?text=${encodeURIComponent(text)}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        function markdownToHtml(text) {
+            let html = text
+                .replace(/```(\w+)?\n([\s\S]+?)```/g, (match, lang, code) => `<pre class="language-${lang || 'plaintext'}"><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`)
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold mb-2 mt-4">$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mb-3 mt-5">$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mb-4 mt-6">$1</h1>')
+                .replace(/^\* (.*$)/gim, '<li>$1</li>')
+                .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+                .replace(/(\n|^)(<li>.*<\/li>)/g, (match, p1, p2) => p2.startsWith('<li style="list-style-type: decimal;">') ? `<ol>${p2}</ol>` : `<ul>${p2}</ul>`)
+                .replace(/<\/ul>\s*<ul>/g, '').replace(/<\/ol>\s*<ol>/g, '');
+            return html.split('\n').map(p => p.trim()).filter(p => p.length > 0).map(p => (p.startsWith('<') && p.endsWith('>')) ? p : `<p class="mb-4">${p}</p>`).join('');
+        }
+        
+        async function handleExecute() {
+            let pagePrefix = currentPage;
+            let activeTool = (pagePrefix === 'home') ? activeHomePageTool : (pagePrefix === 'toolkit') ? activeToolkitPageTool : activeMorePageTool;
+            const userInputElement = document.getElementById(`${pagePrefix}-userInput`);
+            const userInput = userInputElement?.value.trim();
+            if (!userInput) return;
+            setLoadingState(true, pagePrefix);
+            try {
+                const apiUrl = '/api/generate'; // Calls our secure function
+                const payload = { userInput: userInput, activeTool: activeTool };
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    throw new Error(`API error (${response.status}): ${errorBody.error?.message || response.statusText}`);
+                }
+                const result = await response.json();
+                const textResult = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                document.getElementById(`${pagePrefix}-outputContent`).innerHTML = textResult ? markdownToHtml(textResult.trim()) : 'No content returned.';
+            } catch (error) {
+                console.error("Execution Error:", error);
+                document.getElementById(`${pagePrefix}-outputContent`).innerHTML = `<div class="text-red-400 p-4 border border-red-500 rounded-md bg-red-900 bg-opacity-30"><strong>An error occurred:</strong><br>${error.message}</div>`;
+            } finally {
+                setLoadingState(false, pagePrefix);
+            }
+        }
+        
+        function setLoadingState(isLoading, pagePrefix) {
+            const executeButton = document.getElementById(`${pagePrefix}-executeButton`);
+            const spinnerContainer = document.getElementById(`${pagePrefix}-spinner-container`);
+            const outputContent = document.getElementById(`${pagePrefix}-outputContent`);
+            const copyButton = document.getElementById(`${pagePrefix}-copyButton`);
+            if (executeButton) {
+                executeButton.disabled = isLoading;
+                executeButton.classList.toggle('opacity-50', isLoading);
+                executeButton.classList.toggle('cursor-not-allowed', isLoading);
+            }
+            if (spinnerContainer) spinnerContainer.classList.toggle('hidden', !isLoading);
+            if (isLoading && outputContent) outputContent.innerHTML = '';
+            if (copyButton) {
+                const hasContent = !isLoading && outputContent && outputContent.textContent.trim().length > 0;
+                copyButton.disabled = !hasContent;
+                copyButton.classList.toggle('opacity-50', !hasContent);
+            }
+        }
+        
+        function handleCopy() {
+            const pagePrefix = currentPage;
+            const outputContent = document.getElementById(`${pagePrefix}-outputContent`);
+            if (!outputContent || !outputContent.innerText) return;
+            const textarea = document.createElement('textarea');
+            textarea.value = outputContent.innerText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                const copyButton = document.getElementById(`${pagePrefix}-copyButton`);
+                copyButton.innerHTML = `Copied!`;
+                setTimeout(() => { copyButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>Copy`; }, 2000);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.body.removeChild(textarea);
+        }
+        
+        function setupFooter() {
+            const socialIcons = [
+                { name: 'X', tooltip: 'Our X page is coming soon!', icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`, color: 'hover:text-white' },
+                { name: 'LinkedIn', tooltip: 'Our LinkedIn page is coming soon!', icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>`, color: 'hover:text-[#0077B5]' },
+                { name: 'Facebook', tooltip: 'Our Facebook page is coming soon!', icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>`, color: 'hover:text-[#1877F2]' }
+            ];
+            const container = document.getElementById('social-icons');
+            if (!container) return;
+            container.innerHTML = '';
+            socialIcons.forEach(item => {
+                const group = document.createElement('div');
+                group.className = 'footer-icon-group';
+                const link = document.createElement('a');
+                link.className = `text-gray-500 transition-transform duration-200 ease-in-out inline-block hover:scale-110 cursor-pointer ${item.color} w-6 h-6`;
+                link.innerHTML = item.icon;
+                link.addEventListener('click', (e) => { e.preventDefault(); navigate('coming-soon'); });
+                const tooltip = document.createElement('span');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = item.tooltip;
+                group.appendChild(link);
+                group.appendChild(tooltip);
+                container.appendChild(group);
+            });
+        }
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            homePageTemplate = document.getElementById('home-template-container')?.innerHTML || '';
+            toolkitPageTemplate = document.getElementById('toolkit-template-container')?.innerHTML || '';
+            aboutPageTemplate = document.getElementById('about-template-container')?.innerHTML || '';
+            blogPageTemplate = document.getElementById('blog-template-container')?.innerHTML || '';
+            changelogPageTemplate = document.getElementById('changelog-template-container')?.innerHTML || '';
+            morePageTemplate = document.getElementById('more-template-container')?.innerHTML || '';
+            comingSoonPageTemplate = document.getElementById('coming-soon-template-container')?.innerHTML || '';
+            faqTemplate = document.getElementById('faq-template-container')?.innerHTML || '';
+            nextReleaseTemplate = document.getElementById('next-release-template-container')?.innerHTML || '';
+            contactPageTemplate = `<div class="max-w-4xl mx-auto py-12 text-center fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Contact Us</h2><p class="text-lg text-gray-400 mb-8">We'll get back to you via WhatsApp!</p><form id="contact-form" class="text-left max-w-lg mx-auto"><div class="mb-4"><label for="contact-name" class="block text-sm font-medium text-gray-300 mb-1">Name</label><input type="text" id="contact-name" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></div><div class="mb-4"><label for="contact-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label><input type="email" id="contact-email" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></div><div class="mb-6"><label for="contact-message" class="block text-sm font-medium text-gray-300 mb-1">Message</label><textarea id="contact-message" rows="4" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></textarea></div><div class="text-right"><button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 glow-button">Send Message</button></div></form></div>`;
+            document.getElementById('templates-container').remove();
+            setupFooter();
+            document.querySelectorAll('.nav-link, .cursor-pointer[data-page]').forEach(link => {
+                link.addEventListener('click', (e) => { e.preventDefault(); navigate(link.dataset.page); });
+            });
+            navigate('home');
+        });
+    </script>
+</body>
+</html>
