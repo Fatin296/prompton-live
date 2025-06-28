@@ -5,6 +5,10 @@
       "dest": "/api/generate.js"
     },
     {
+      "src": "/sitemap.xml",
+      "dest": "/sitemap.xml"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
