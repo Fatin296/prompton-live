@@ -58,6 +58,10 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
+        .output-content[contenteditable="true"]:focus {
+            outline: 2px solid #3b82f6;
+            box-shadow: 0 0 0 2px #1d4ed8;
+        }
 
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -114,7 +118,7 @@
 <body class="bg-gray-900">
     <div id="root-container" class="relative z-10 min-h-screen flex flex-col p-4 sm:p-6 lg:p-8 fade-in">
         <header class="w-full max-w-7xl mx-auto mb-8 fade-in-up">
-      <nav class="relative text-white">
+    <nav class="relative text-white">
   
   <style>
     /* Simple hide/show for icons */
@@ -171,30 +175,6 @@
     </div>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const mobileMenuButton = document.getElementById('mobile-menu-button');
-      const mobileMenuPanel = document.getElementById('mobile-menu-panel');
-      const openIcon = document.getElementById('menu-open-icon');
-      const closeIcon = document.getElementById('menu-close-icon');
-
-      if (mobileMenuButton && mobileMenuPanel && openIcon && closeIcon) {
-        mobileMenuButton.addEventListener('click', () => {
-          mobileMenuPanel.classList.toggle('is-open'); 
-          openIcon.classList.toggle('menu-hidden');
-          closeIcon.classList.toggle('menu-hidden');
-        });
-
-        mobileMenuPanel.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                if (mobileMenuPanel.classList.contains('is-open')) {
-                    mobileMenuButton.click();
-                }
-            });
-        });
-      }
-    });
-  </script>
 </nav>
         </header>
 
@@ -209,7 +189,7 @@
                             <h1 class="text-2xl prompton-brand">PROMPTON</h1>
                         </div>
                         <p class="mt-4 text-gray-400 text-sm">Smarter Prompts. Sharper Results.</p>
-                         <div class="mt-4 flex items-center gap-3 text-gray-400 text-sm">Powered by<img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="h-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"><path d="M12 2.75L14.75 5.5L12 8.25L9.25 5.5L12 2.75ZM5.5 9.25L8.25 12L5.5 14.75L2.75 12L5.5 9.25ZM18.5 9.25L21.25 12L18.5 14.75L15.75 12L18.5 9.25ZM12 15.75L14.75 18.5L12 21.25L9.25 18.5L12 15.75Z" fill="url(#gemini-gradient)"/><defs><linearGradient id="gemini-gradient" x1="2.75" y1="2.75" x2="21.25" y2="21.25" gradientUnits="userSpaceOnUse"><stop stop-color="#89F1FF"/><stop offset="1" stop-color="#5E62FF"/></linearGradient></defs></svg><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M10.8824 2.82361L3 13.7059H12.0118L13.1176 21.1765L21 10.2942H11.9882L10.8824 2.82361Z" fill="#F4B400"/></svg>
+                           <div class="mt-4 flex items-center gap-3 text-gray-400 text-sm">Powered by<img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Google Logo" class="h-5"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"><path d="M12 2.75L14.75 5.5L12 8.25L9.25 5.5L12 2.75ZM5.5 9.25L8.25 12L5.5 14.75L2.75 12L5.5 9.25ZM18.5 9.25L21.25 12L18.5 14.75L15.75 12L18.5 9.25ZM12 15.75L14.75 18.5L12 21.25L9.25 18.5L12 15.75Z" fill="url(#gemini-gradient)"/><defs><linearGradient id="gemini-gradient" x1="2.75" y1="2.75" x2="21.25" y2="21.25" gradientUnits="userSpaceOnUse"><stop stop-color="#89F1FF"/><stop offset="1" stop-color="#5E62FF"/></linearGradient></defs></svg><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"><path d="M10.8824 2.82361L3 13.7059H12.0118L13.1176 21.1765L21 10.2942H11.9882L10.8824 2.82361Z" fill="#F4B400"/></svg>
                         </div>
                     </div>
                     <div>
@@ -258,8 +238,24 @@
                     <button data-tool="constraints" class="tool-tab px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg> Add Constraints</button>
                 </div>
                 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
-                    <div class="flex flex-col"><div class="h-8 flex items-center mb-2"><label id="home-inputLabel" for="home-userInput" class="text-sm font-medium text-gray-300">Enter your prompt to Enhance</label></div><textarea id="home-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="e.g., write a story about a robot"></textarea></div>
-                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="home-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="home-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="home-outputContent" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
+                    <div class="flex flex-col">
+                        <div class="h-8 flex justify-between items-center mb-2">
+                            <label id="home-inputLabel" for="home-userInput" class="text-sm font-medium text-gray-300">Enter your prompt to Enhance</label>
+                            <button id="home-clearButton" class="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                                Clear
+                            </button>
+                        </div>
+                        <textarea id="home-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="e.g., write a story about a robot"></textarea>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Create a...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Act as a...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Provide me...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Explain...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Write a...</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="home-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="home-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="home-outputContent" contenteditable="true" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
                 </div>
                 <div class="w-full flex justify-center mt-8 fade-in-up" style="animation-delay: 400ms;"><button id="home-executeButton" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg glow-button flex items-center justify-center gap-2"><span id="home-executeButtonIcon">✨</span><span id="home-executeButtonText">Enhance</span></button></div>
             </div>
@@ -274,17 +270,31 @@
                     <button data-tool="plagiarism" class="tool-tab-toolkit px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg> Plagiarism</button>
                 </div>
                 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
-                    <div class="flex flex-col"><div class="h-8 flex items-center mb-2"><label id="toolkit-inputLabel" for="toolkit-userInput" class="text-sm font-medium text-gray-300">Enter text to Summarize</label></div><textarea id="toolkit-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="Paste your article, notes, or any text here..."></textarea></div>
-                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="toolkit-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="toolkit-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="toolkit-outputContent" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
+                    <div class="flex flex-col">
+                        <div class="h-8 flex justify-between items-center mb-2">
+                            <label id="toolkit-inputLabel" for="toolkit-userInput" class="text-sm font-medium text-gray-300">Enter text to Summarize</label>
+                            <button id="toolkit-clearButton" class="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                                Clear
+                            </button>
+                        </div>
+                        <textarea id="toolkit-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="Paste your article, notes, or any text here..."></textarea>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Summarize...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Check grammar for...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Extract keywords from...</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="toolkit-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="toolkit-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="toolkit-outputContent" contenteditable="true" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
                 </div>
                 <div class="w-full flex justify-center mt-8 fade-in-up" style="animation-delay: 400ms;"><button id="toolkit-executeButton" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg glow-button flex items-center justify-center gap-2"><span id="toolkit-executeButtonIcon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></span><span id="toolkit-executeButtonText">Summarize</span></button></div>
             </div>
         
             <div id="about-template-container"><div class="max-w-4xl mx-auto py-12 text-center fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4">About Prompton</h2><p class="text-lg text-gray-400 mb-8">Prompton was born from a simple idea: the quality of an AI's output is directly proportional to the quality of its input. In a world powered by large language models, the ability to craft clear, precise, and effective prompts is the key to unlocking true potential. Our mission is to provide creators, developers, and innovators with the tools to master the art of prompt engineering effortlessly.</p><div class="grid md:grid-cols-2 gap-8 text-left"><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-colors duration-300"><h3 class="text-xl font-semibold text-blue-400 mb-2">Our Vision</h3><p class="text-gray-400">To be the essential co-pilot in human-AI collaboration, making advanced AI accessible and effective for everyone, regardless of their technical background.</p></div><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-colors duration-300"><h3 class="text-xl font-semibold text-blue-400 mb-2">Our Technology</h3><p class="text-gray-400">We leverage the state-of-the-art Gemini API from Google, fine-tuning our meta-prompts to deliver intelligent refinements, creative variations, and insightful ideas tailored to your needs.</p></div></div></div></div>
         
-            <div id="blog-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">The Prompton Blog</h2><div class="space-y-8"><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1"><p class="text-sm text-gray-500">June 26, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">The Art of Specificity: Why Vague Prompts Fail</h3><p class="text-gray-400 mt-2">Discover how adding context, constraints, and a persona to your prompts can dramatically increase the quality of AI-generated content...</p><a href="#" class="text-blue-400 hover:text-blue-300 mt-4 inline-block font-semibold">Read More &rarr;</a></div></div></div></div>
+            <div id="blog-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">The Prompton Blog</h2><div class="space-y-8"><div class="bg-gray-900 p-6 rounded-lg border border-gray-800 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1"><p class="text-sm text-gray-500">June 25, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">The Art of Specificity: Why Vague Prompts Fail</h3><p class="text-gray-400 mt-2">Discover how adding context, constraints, and a persona to your prompts can dramatically increase the quality of AI-generated content...</p><a href="#" class="text-blue-400 hover:text-blue-300 mt-4 inline-block font-semibold">Read More &rarr;</a></div></div></div></div>
         
-            <div id="changelog-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Project Changelog</h2><div class="space-y-12"><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-blue-500"><div class="absolute -left-4 top-4 h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center ring-8 ring-gray-900"><svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div><p class="text-sm text-gray-500">June 26, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.3.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Added a dedicated "Changelog" page to track project updates.</li><li><span class="font-semibold text-green-400">New Feature:</span> Expanded the Home page prompt toolkit with "Add Persona", "Specify Format", and "Add Constraints".</li><li><span class="font-semibold text-blue-400">Enhancement:</span> Restructured JavaScript to support multiple pages with unique toolsets.</li></ul></div><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-gray-700"><div class="absolute -left-3 top-4 h-6 w-6 bg-gray-700 rounded-full ring-8 ring-gray-900"></div><p class="text-sm text-gray-500">June 25, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.2.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Created the "Toolkit" page for advanced content and SEO analysis.</li><li><span class="font-semibold text-green-400">New Feature:</span> Added "Summarize Text", "Grammar Check", "Keyword Extract", "Tone Adjust", and "Plagiarism Check" tools.</li><li><span class="font-semibold text-blue-400">Enhancement:</span> Added a "Toolkit" link to the main navigation bar.</li></ul></div><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-gray-700"><div class="absolute -left-3 top-4 h-6 w-6 bg-gray-700 rounded-full ring-8 ring-gray-900"></div><p class="text-sm text-gray-500">June 24, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.0.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Initial launch of the Prompton application.</li><li><span class="font-semibold text-blue-400">Core Functionality:</span> Implemented Home, About, and Blog pages with a Single Page Application (SPA) architecture.</li><li><span class="font-semibold text-blue-400">Core Functionality:</span> Integrated Gemini API for prompt processing.</li></ul></div></div></div></div>
+            <div id="changelog-template-container"><div class="max-w-4xl mx-auto py-12 fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-8 text-center">Project Changelog</h2><div class="space-y-12"><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-blue-500"><div class="absolute -left-4 top-4 h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center ring-8 ring-gray-900"><svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg></div><p class="text-sm text-gray-500">June 25, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.3.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Added a dedicated "Changelog" page to track project updates.</li><li><span class="font-semibold text-green-400">New Feature:</span> Expanded the Home page prompt toolkit with "Add Persona", "Specify Format", and "Add Constraints".</li><li><span class="font-semibold text-blue-400">Enhancement:</span> Restructured JavaScript to support multiple pages with unique toolsets.</li></ul></div><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-gray-700"><div class="absolute -left-3 top-4 h-6 w-6 bg-gray-700 rounded-full ring-8 ring-gray-900"></div><p class="text-sm text-gray-500">June 24, 2025</p<h3 class="text-2xl font-semibold text-white mt-2">Version 1.2.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Created the "Toolkit" page for advanced content and SEO analysis.</li><li><span class="font-semibold text-green-400">New Feature:</span> Added "Summarize Text", "Grammar Check", "Keyword Extract", "Tone Adjust", and "Plagiarism Check" tools.</li><li><span class="font-semibold text-blue-400">Enhancement:</span> Added a "Toolkit" link to the main navigation bar.</li></ul></div><div class="relative pl-8 sm:pl-12 py-4 border-l-2 border-gray-700"><div class="absolute -left-3 top-4 h-6 w-6 bg-gray-700 rounded-full ring-8 ring-gray-900"></div><p class="text-sm text-gray-500">June 23, 2025</p><h3 class="text-2xl font-semibold text-white mt-2">Version 1.0.0</h3><ul class="mt-3 list-disc list-inside text-gray-300 space-y-2"><li><span class="font-semibold text-green-400">New Feature:</span> Initial launch of the Prompton application.</li><li><span class="font-semibold text-blue-400">Core Functionality:</span> Implemented Home, About, and Blog pages with a Single Page Application (SPA) architecture.</li><li><span class="font-semibold text-blue-400">Core Functionality:</span> Integrated Gemini API for prompt processing.</li></ul></div></div></div></div>
         
             <div id="more-template-container">
                 <div class="text-center fade-in-up" style="animation-delay: 100ms;"><h2 class="text-4xl md:text-5xl font-bold text-white">Advanced Tooling</h2><p class="mt-2 text-lg text-gray-400">Specialized generators for SEO, Content, Code, and Design.</p></div>
@@ -295,8 +305,24 @@
                     <button data-tool="design" class="tool-tab-more px-4 py-2 text-sm font-medium rounded-md transition flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4-2.245 4.5 4.5 0 118.55-2.442c.32-.135.64-.293.94-.465a.75.75 0 01.95.144a2.25 2.25 0 004.283 1.099A4.491 4.491 0 0018 9.75v-.7V9A2.25 2.25 0 0015.75 6.75A2.25 2.25 0 0013.5 9v.75m-6.075 5.25a2.25 2.25 0 00-2.25 2.25c0 1.242 1.008 2.25 2.25 2.25h3.75a2.25 2.25 0 002.25-2.25V16.5c0-1.242-1.008-2.25-2.25-2.25h-3.75a2.25 2.25 0 00-2.25 2.25z" /></svg> UX Copy</button>
                 </div>
                 <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up" style="animation-delay: 300ms;">
-                    <div class="flex flex-col"><div class="h-8 flex items-center mb-2"><label id="more-inputLabel" for="more-userInput" class="text-sm font-medium text-gray-300">Enter a topic or keywords</label></div><textarea id="more-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="e.g., 'AI in healthcare'"></textarea></div>
-                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="more-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="more-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="more-outputContent" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
+                    <div class="flex flex-col">
+                        <div class="h-8 flex justify-between items-center mb-2">
+                            <label id="more-inputLabel" for="more-userInput" class="text-sm font-medium text-gray-300">Enter a topic or keywords</label>
+                            <button id="more-clearButton" class="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                                Clear
+                            </button>
+                        </div>
+                        <textarea id="more-userInput" class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-gray-200 resize-none custom-scrollbar" placeholder="e.g., 'AI in healthcare'"></textarea>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Create a...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Act as a...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Provide me...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Explain...</button>
+                            <button class="prompt-suggestion bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded-full hover:bg-gray-700 transition">Write a...</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col"><div class="h-8 flex justify-between items-center mb-2"><label class="text-sm font-medium text-gray-300">Result</label><button id="more-copyButton" class="px-3 py-1 bg-gray-800 border border-gray-700 hover:bg-gray-700 text-sm rounded-md transition duration-200 flex items-center opacity-50" disabled><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard mr-2" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" /><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" /></svg>Copy</button></div><div class="w-full h-80 p-4 bg-gray-900 border border-gray-700 rounded-lg relative"><div id="more-spinner-container" class="absolute inset-0 flex items-center justify-center hidden bg-gray-900 bg-opacity-75 rounded-lg"><div class="spinner"></div></div><div id="more-outputContent" contenteditable="true" data-placeholder="Your result will appear here..." class="output-content whitespace-pre-wrap w-full h-full overflow-y-auto text-gray-300 custom-scrollbar"></div></div></div>
                 </div>
                 <div class="w-full flex justify-center mt-8 fade-in-up" style="animation-delay: 400ms;"><button id="more-executeButton" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg glow-button flex items-center justify-center gap-2"><span id="more-executeButtonIcon"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></span><span id="more-executeButtonText">Generate Meta</span></button></div>
             </div>
@@ -309,9 +335,6 @@
         </div>
 
     <script>
-        // --- THIS IS YOUR SECURE, CLIENT-SIDE JAVASCRIPT ---
-        // --- IT DOES NOT CONTAIN ANY API KEYS ---
-
         // --- APPLICATION STATE ---
         let currentPage = 'home';
         let activeHomePageTool = 'refine';
@@ -322,14 +345,19 @@
         const pageContent = document.getElementById('page-content');
 
         // --- TEMPLATE CACHE ---
-        let homePageTemplate, toolkitPageTemplate, aboutPageTemplate, blogPageTemplate,
-            changelogPageTemplate, morePageTemplate, comingSoonPageTemplate, contactPageTemplate,
+        let homePageTemplate, toolkitPageTemplate, aboutPageTemplate, blogPageTemplate, 
+            changelogPageTemplate, morePageTemplate, comingSoonPageTemplate, contactPageTemplate, 
             faqTemplate, nextReleaseTemplate;
 
         // --- CORE APPLICATION LOGIC ---
+
+        /**
+         * Main navigation function to switch between pages.
+         * @param {string} page - The name of the page to navigate to.
+         */
         function navigate(page) {
             currentPage = page;
-            pageContent.innerHTML = '';
+            pageContent.innerHTML = ''; // Clear previous content
             pageContent.style.opacity = 0;
 
             let newContent = '';
@@ -348,6 +376,7 @@
 
             pageContent.innerHTML = newContent;
 
+            // Add listeners specific to the newly loaded page content
             switch (page) {
                 case 'home': addHomePageListeners(); setActiveHomePageTool(activeHomePageTool); break;
                 case 'toolkit': addToolkitPageListeners(); setActiveToolkitPageTool(activeToolkitPageTool); break;
@@ -356,6 +385,7 @@
                 case 'faq': setupFAQPage(); break;
             }
 
+            // Animate the new content fading in
             setTimeout(() => {
                 pageContent.style.opacity = 1;
                 pageContent.style.transition = 'opacity 0.5s';
@@ -365,6 +395,7 @@
         }
 
         // --- PAGE-SPECIFIC LOGIC ---
+
         function setActiveHomePageTool(tool) {
             activeHomePageTool = tool;
             updateTabStyles('.tool-tab', tool);
@@ -386,6 +417,16 @@
         function addHomePageListeners() {
             document.getElementById('home-executeButton')?.addEventListener('click', handleExecute);
             document.getElementById('home-copyButton')?.addEventListener('click', handleCopy);
+            document.getElementById('home-clearButton')?.addEventListener('click', handleClearInput);
+            pageContent.querySelectorAll('.prompt-suggestion').forEach(button => {
+                button.addEventListener('click', () => {
+                    const userInput = pageContent.querySelector('#home-userInput');
+                    if(userInput) {
+                        userInput.value += button.textContent + ' ';
+                        userInput.focus();
+                    }
+                });
+            });
             document.querySelectorAll('.tool-tab').forEach(tab => {
                 tab.addEventListener('click', () => setActiveHomePageTool(tab.dataset.tool));
             });
@@ -411,6 +452,16 @@
         function addToolkitPageListeners() {
             document.getElementById('toolkit-executeButton')?.addEventListener('click', handleExecute);
             document.getElementById('toolkit-copyButton')?.addEventListener('click', handleCopy);
+            document.getElementById('toolkit-clearButton')?.addEventListener('click', handleClearInput);
+            pageContent.querySelectorAll('.prompt-suggestion').forEach(button => {
+                button.addEventListener('click', () => {
+                    const userInput = pageContent.querySelector('#toolkit-userInput');
+                    if(userInput) {
+                        userInput.value += button.textContent + ' ';
+                        userInput.focus();
+                    }
+                });
+            });
             document.querySelectorAll('.tool-tab-toolkit').forEach(tab => {
                 tab.addEventListener('click', () => setActiveToolkitPageTool(tab.dataset.tool));
             });
@@ -423,7 +474,7 @@
         }
         
         function updateMorePageUI(tool) {
-            const uiConfig = {
+             const uiConfig = {
                 seo: { label: "Enter Topic to Generate Meta Description", placeholder: "Enter a topic or keywords for your page (e.g., 'benefits of hydration')", btnText: "Generate Meta", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>` },
                 content: { label: "Enter Topic to Create a Blog Outline", placeholder: "Enter the main topic for your blog post (e.g., 'the future of renewable energy')", btnText: "Create Outline", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>` },
                 code: { label: "Enter Code to Refactor", placeholder: "Paste the code snippet you want to refactor here...", btnText: "Refactor Code", btnIcon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>` },
@@ -435,6 +486,16 @@
         function addMorePageListeners() {
             document.getElementById('more-executeButton')?.addEventListener('click', handleExecute);
             document.getElementById('more-copyButton')?.addEventListener('click', handleCopy);
+            document.getElementById('more-clearButton')?.addEventListener('click', handleClearInput);
+            pageContent.querySelectorAll('.prompt-suggestion').forEach(button => {
+                button.addEventListener('click', () => {
+                    const userInput = pageContent.querySelector('#more-userInput');
+                    if(userInput) {
+                        userInput.value += button.textContent + ' ';
+                        userInput.focus();
+                    }
+                });
+            });
             document.querySelectorAll('.tool-tab-more').forEach(tab => {
                 tab.addEventListener('click', () => setActiveMorePageTool(tab.dataset.tool));
             });
@@ -446,12 +507,16 @@
                     const answer = question.nextElementSibling;
                     const chevron = question.querySelector('.faq-chevron');
                     const isHidden = answer.classList.contains('hidden');
+                    
+                    // Close all other open FAQs
                     document.querySelectorAll('.faq-answer').forEach(ans => {
                         if (ans !== answer) {
                             ans.classList.add('hidden');
                             ans.previousElementSibling.querySelector('.faq-chevron').classList.remove('rotate-180');
                         }
                     });
+
+                    // Toggle the clicked FAQ
                     answer.classList.toggle('hidden', !isHidden);
                     chevron.classList.toggle('rotate-180', isHidden);
                 });
@@ -459,15 +524,38 @@
         }
 
         // --- SHARED & GENERAL-PURPOSE FUNCTIONS ---
+
+        /**
+         * Clears the input textarea for the current page.
+         */
+        function handleClearInput() {
+            const userInput = document.getElementById(`${currentPage}-userInput`);
+            if (userInput) {
+                userInput.value = '';
+            }
+        }
+
+        /**
+         * Updates the UI elements for a given tool on a page.
+         * @param {string} pagePrefix - The prefix for the DOM element IDs (e.g., 'home', 'toolkit').
+         * @param {string} tool - The name of the active tool.
+         * @param {object} uiConfig - An object containing UI configurations for all tools on that page.
+         */
         function updateUIForTool(pagePrefix, tool, uiConfig) {
             const config = uiConfig[tool];
             if (!config) return;
+
             document.getElementById(`${pagePrefix}-userInput`).placeholder = config.placeholder;
             document.getElementById(`${pagePrefix}-inputLabel`).textContent = config.label;
             document.getElementById(`${pagePrefix}-executeButtonText`).textContent = config.btnText;
             document.getElementById(`${pagePrefix}-executeButtonIcon`).innerHTML = config.btnIcon;
         }
         
+        /**
+         * Updates the visual style of tool tabs.
+         * @param {string} selector - The CSS selector for the tabs.
+         * @param {string} activeTool - The name of the currently active tool.
+         */
         function updateTabStyles(selector, activeTool) {
             document.querySelectorAll(selector).forEach(tab => {
                 const isTabActive = tab.dataset.tool === activeTool;
@@ -477,6 +565,9 @@
             });
         }
         
+        /**
+         * Updates the main navigation links to highlight the current page.
+         */
         function updateNavLinks() {
             document.querySelectorAll('.nav-link').forEach(link => {
                 const isLinkActive = link.dataset.page === currentPage;
@@ -486,6 +577,10 @@
             });
         }
         
+        /**
+         * Handles the contact form submission by opening WhatsApp.
+         * @param {Event} event - The form submission event.
+         */
         function handleContactSubmit(event) {
             event.preventDefault();
             const name = document.getElementById('contact-name').value;
@@ -496,6 +591,38 @@
             window.open(whatsappURL, '_blank');
         }
 
+        /**
+         * Constructs the full prompt to send to the Gemini API.
+         * @param {string} action - The tool being used (e.g., 'refine', 'summarize').
+         * @param {string} prompt - The user's input.
+         * @returns {string} The complete meta-prompt.
+         */
+        function getMetaPrompt(action, prompt) {
+            const prompts = {
+                refine: `You are an expert prompt engineer. Your task is to refine and enhance the following user-submitted prompt to make it clearer, more specific, and more effective for a large language model. Add details, context, and constraints. Return only the improved prompt.`,
+                variations: `You are a creative prompt assistant. Your task is to generate 3 distinct yet related variations of the user's prompt. Each variation should explore a different angle, style, or focus. Format the output as a numbered list.`,
+                ideas: `You are an idea-generation bot. Based on the user's topic, brainstorm 5 creative and interesting prompt ideas that could be used to generate compelling text, stories, or scripts. Format the output as a numbered list.`,
+                persona: `You are an expert prompt engineer. The user wants to add a persona to their prompt. Analyze the user's input, which contains the desired persona and the base prompt (e.g., "Persona: a cynical detective. Prompt: describe a rainy night"). Your task is to integrate the persona seamlessly into the prompt to guide the AI's voice and style. Return the complete, refined prompt.`,
+                format: `You are a formatting expert for AI prompts. The user will provide a desired format and a base prompt (e.g., "Format: JSON with keys 'name' and 'capital'. Prompt: list of European countries and their capitals"). Your task is to combine these into a single, clear prompt that instructs the AI to generate the output in the specified format. Return only the final, combined prompt.`,
+                constraints: `You are an expert prompt engineer specializing in constraints. The user will provide a constraint and a base prompt (e.g., "Constraint: use simple language, under 50 words. Prompt: explain quantum computing"). Your task is to merge the constraint into the prompt in a way that effectively limits the AI's output as requested. Return only the final, constrained prompt.`,
+                summarize: `You are a text analysis expert. Your task is to summarize the following text. Create a concise summary that captures the main points and key information. Format the output with a main summary paragraph followed by bullet points for key takeaways.`,
+                grammar: `You are an expert editor. Please proofread the following text for grammatical errors, spelling mistakes, awkward phrasing, and punctuation issues. Provide a corrected version of the text. If the text is perfect, simply state that "The text is grammatically correct and requires no changes."`,
+                keywords: `You are an SEO expert. Your task is to extract the most relevant keywords from the following text. Please categorize them into 'Primary Keywords' (main topics), 'Secondary Keywords' (related terms), and 'Long-tail Keywords' (phrases of 3+ words). Format the output clearly with Markdown headings for each category.`,
+                tone: `You are a communications expert. Your task is to adjust the tone of the following text. The user will provide the text and the desired new tone. Rewrite the text to match the new tone while preserving the core message. The user input format will be: [Desired Tone] followed by the text. For example: "Formal: [user's text]".`,
+                plagiarism: `You are a plagiarism detection assistant. Your task is to analyze the following text and identify if there are sections that are likely unoriginal. While you cannot browse the web in real-time, simulate a plagiarism check by identifying sentences or phrases that are generic, common knowledge, or sound like they might be copied from a source. For each potentially unoriginal part, quote it and briefly explain why it was flagged. If the text seems original, state that clearly.`,
+                seo: `You are an SEO expert. Based on the following topic or keywords, generate a compelling, SEO-friendly meta title (under 60 characters) and a meta description (under 160 characters). The description should be engaging and include a call-to-action. Format the output clearly with "Meta Title" and "Meta Description" headings.`,
+                content: `You are a content strategist. Based on the following blog post topic, create a detailed and well-structured outline. The outline should include a catchy headline, an introduction hook, at least 3-4 main sections with sub-bullet points for key ideas, and a concluding summary.`,
+                code: `You are a senior software developer and code reviewer. Analyze the following code snippet. Your task is to refactor it by improving its readability, efficiency, and adherence to best practices. Provide the refactored code and a brief, bulleted list of the specific changes you made and why.`,
+                design: `You are a UX writer. Based on the following description of a UI element, generate three distinct options for clear, concise, and user-friendly copy. Label them "Option 1", "Option 2", and "Option 3".`
+            };
+            return `${prompts[action]}\n\nUser's input: "${prompt}"`;
+        }
+        
+        /**
+         * Converts Markdown-like text to basic HTML.
+         * @param {string} text - The input text with Markdown syntax.
+         * @returns {string} The converted HTML string.
+         */
         function markdownToHtml(text) {
             let html = text
                 .replace(/```(\w+)?\n([\s\S]+?)```/g, (match, lang, code) => `<pre class="language-${lang || 'plaintext'}"><code>${code.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`)
@@ -510,26 +637,37 @@
             return html.split('\n').map(p => p.trim()).filter(p => p.length > 0).map(p => (p.startsWith('<') && p.endsWith('>')) ? p : `<p class="mb-4">${p}</p>`).join('');
         }
         
+        /**
+         * Handles the main execution of the AI prompt generation.
+         */
         async function handleExecute() {
             let pagePrefix = currentPage;
             let activeTool = (pagePrefix === 'home') ? activeHomePageTool : (pagePrefix === 'toolkit') ? activeToolkitPageTool : activeMorePageTool;
-            const userInputElement = document.getElementById(`${pagePrefix}-userInput`);
-            const userInput = userInputElement?.value.trim();
-            if (!userInput) return;
+            
+            const userInput = document.getElementById(`${pagePrefix}-userInput`);
+            if (!userInput || !userInput.value.trim()) return;
+            
             setLoadingState(true, pagePrefix);
+            const metaPrompt = getMetaPrompt(activeTool, userInput.value.trim());
+
             try {
-                const apiUrl = '/api/generate'; // Calls our secure function
-                const payload = { userInput: userInput, activeTool: activeTool };
+                const apiUrl = '/api/generate'; // This now calls your secure backend endpoint
+                
+                const payload = { metaPrompt: metaPrompt }; // Send the constructed prompt to your backend
+
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+
                 if (!response.ok) {
                     const errorBody = await response.json();
-                    throw new Error(`API error (${response.status}): ${errorBody.error?.message || response.statusText}`);
+                    throw new Error(`API error (${response.status}): ${errorBody.error || response.statusText}`);
                 }
+                
                 const result = await response.json();
+                // Assuming your backend passes through the Google API response structure
                 const textResult = result.candidates?.[0]?.content?.parts?.[0]?.text;
                 document.getElementById(`${pagePrefix}-outputContent`).innerHTML = textResult ? markdownToHtml(textResult.trim()) : 'No content returned.';
             } catch (error) {
@@ -540,11 +678,17 @@
             }
         }
         
+        /**
+         * Toggles the loading state of the UI.
+         * @param {boolean} isLoading - Whether the application is currently loading.
+         * @param {string} pagePrefix - The prefix for the DOM element IDs.
+         */
         function setLoadingState(isLoading, pagePrefix) {
             const executeButton = document.getElementById(`${pagePrefix}-executeButton`);
             const spinnerContainer = document.getElementById(`${pagePrefix}-spinner-container`);
             const outputContent = document.getElementById(`${pagePrefix}-outputContent`);
             const copyButton = document.getElementById(`${pagePrefix}-copyButton`);
+
             if (executeButton) {
                 executeButton.disabled = isLoading;
                 executeButton.classList.toggle('opacity-50', isLoading);
@@ -552,6 +696,7 @@
             }
             if (spinnerContainer) spinnerContainer.classList.toggle('hidden', !isLoading);
             if (isLoading && outputContent) outputContent.innerHTML = '';
+
             if (copyButton) {
                 const hasContent = !isLoading && outputContent && outputContent.textContent.trim().length > 0;
                 copyButton.disabled = !hasContent;
@@ -559,10 +704,14 @@
             }
         }
         
+        /**
+         * Copies the content of the output box to the clipboard.
+         */
         function handleCopy() {
             const pagePrefix = currentPage;
             const outputContent = document.getElementById(`${pagePrefix}-outputContent`);
             if (!outputContent || !outputContent.innerText) return;
+            
             const textarea = document.createElement('textarea');
             textarea.value = outputContent.innerText;
             document.body.appendChild(textarea);
@@ -578,6 +727,9 @@
             document.body.removeChild(textarea);
         }
         
+        /**
+         * Sets up the social media icons in the footer.
+         */
         function setupFooter() {
             const socialIcons = [
                 { name: 'X', tooltip: 'Our X page is coming soon!', icon: `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`, color: 'hover:text-white' },
@@ -615,13 +767,18 @@
             faqTemplate = document.getElementById('faq-template-container')?.innerHTML || '';
             nextReleaseTemplate = document.getElementById('next-release-template-container')?.innerHTML || '';
             contactPageTemplate = `<div class="max-w-4xl mx-auto py-12 text-center fade-in-up"><h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Contact Us</h2><p class="text-lg text-gray-400 mb-8">We'll get back to you via WhatsApp!</p><form id="contact-form" class="text-left max-w-lg mx-auto"><div class="mb-4"><label for="contact-name" class="block text-sm font-medium text-gray-300 mb-1">Name</label><input type="text" id="contact-name" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></div><div class="mb-4"><label for="contact-email" class="block text-sm font-medium text-gray-300 mb-1">Email</label><input type="email" id="contact-email" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></div><div class="mb-6"><label for="contact-message" class="block text-sm font-medium text-gray-300 mb-1">Message</label><textarea id="contact-message" rows="4" class="mt-1 block w-full bg-gray-900 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required></textarea></div><div class="text-right"><button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 glow-button">Send Message</button></div></form></div>`;
+
             document.getElementById('templates-container').remove();
+            
             setupFooter();
+            
             document.querySelectorAll('.nav-link, .cursor-pointer[data-page]').forEach(link => {
                 link.addEventListener('click', (e) => { e.preventDefault(); navigate(link.dataset.page); });
             });
+            
             navigate('home');
         });
     </script>
 </body>
+
 </html>
