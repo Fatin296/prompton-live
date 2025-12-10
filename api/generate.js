@@ -22,7 +22,8 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'API key is not configured on the server.' });
   }
 
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+// Change your URL to use this stable model name:
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   const payload = { contents: [{ role: "user", parts: [{ text: metaPrompt }] }] };
 
   try {
